@@ -8,6 +8,7 @@ const PORT = 3001;
 app.use(express.json());
 app.use(cors());
 
+const AWS_API_GATEWAY_URL = 'https://6uplelqcul.execute-api.us-east-1.amazonaws.com'
 
 app.post('/api', async (req, res) => {
     try {
