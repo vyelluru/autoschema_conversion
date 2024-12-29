@@ -1,78 +1,86 @@
-/* App.css */
-
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f9f9f9;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
 .container {
-  max-width: 600px;
-  width: 90%;
-  background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  margin: auto;
   text-align: center;
+  padding: 15px;
+  font-family: Arial, sans-serif;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  color: #333333;
+  font-size:24px;
+  margin-bottom: 20px;
+  color: #333;
 }
 
-.inputGroup {
-  margin-bottom: 1.5rem;
-  text-align: left;
+.uploadSection {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #f9f9f9;
 }
 
-.label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-  color: #555555;
+.dropzone-container {
+  margin-bottom: 10px;
 }
 
-input[type="file"],
-input[type="text"] {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #cccccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.2s ease-in-out;
-}
-
-input[type="file"]:focus,
-input[type="text"]:focus {
-  border-color: #007bff;
-}
-
-button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  color: #ffffff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 5px;
+.dropzone {
+  border: 2px dashed #007bff;
+  border-radius: 4px;
+  padding: 12px;
+  width: 150px; /* Set fixed width */
+  height: 50px; /* Set fixed height */
+  display: flex;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  background-color: #fff;
+  transition: background-color 0.2s;
+  font-size: 18px;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
 }
 
-button:hover {
+.dropzone.active {
+  background-color: #e9f5ff;
+}
+
+.button {
+  padding: 8px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
   background-color: #0056b3;
 }
 
-p {
-  font-size: 0.9rem;
-  color: #666666;
-  margin-top: 0.5rem;
+.textInput {
+  padding: 8px;
+  width: 75%;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.label {
+  font-size: 18px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.status {
+  margin-top: 10px;
+  font-size: 18x;
+  color: #28a745;
+}
+
+.file-name {
+  margin-top: 10px;
+  font-size: 20px;
+  color: #555;
+  font-style: italic;
 }

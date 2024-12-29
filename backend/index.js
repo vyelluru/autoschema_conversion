@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const PORT = 4000;
@@ -8,30 +9,29 @@ const PORT = 4000;
 app.use(express.json());
 app.use(cors());
 
-const AWS_API_GATEWAY_URL = 'https://6uplelqcul.execute-api.us-east-1.amazonaws.com'
 
-app.post('/api', async (req, res) => {
-    try {
-        // Get file names from the req body
-        const { input_file, output_format_file, output_file } = req.body;
+/*
+1. I want to pass a file through multer, then click upload to "aws s3"
+2. I want to click "submit" button to call the lambda function directly.
+*/
 
-        // Create payload to send to api gateway
-        const payload = {
-            input_file,
-            output_format_file,
-            output_file,
-        };
-
-        // Post request to url with payload
-        const response = await axios.post(AWS_API_GATEWAY_URL, payload);
-        console.log("Lambda Response:", response.data);
-
-        res.status(200).json(response.data);
-
-    } catch (error) {
-        console.error("Error triggering Lambda:", error.message);
-    }
-});
+// Upload Input File
+app.post('/input_file', upload.single('file'), async (req, res) => {
+    const params = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: req.file.originalname,
+      Body: req.file.buffer,
+    };
+  
+    s3.upload(params, (err, data) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Error uploading file');
+      }
+  
+      res.send('File uploaded successfully');
+    });
+  });
 
 
 app.listen(PORT, () => {

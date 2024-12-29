@@ -1,28 +1,29 @@
 import React, { useState } from 'react';
-import './App.css';
+import Dropzone from './Dropzone'; // Import the reusable Dropzone component
+import './App.css'; // For shared styles
 
 const App = () => {
-    const [inputFile, setInputFile] = useState('');
-    const [outputFormatFile, setOutputFormatFile] = useState('');
+    const [inputFile, setInputFile] = useState(null);
+    const [outputFormatFile, setOutputFormatFile] = useState(null);
     const [outputFileName, setOutputFileName] = useState('');
+    const [statusInput, setStatusInput] = useState('');
+    const [statusOutputFormat, setStatusOutputFormat] = useState('');
+    const [statusOutputFileName, setStatusOutputFileName] = useState('');
 
-    const handleSubmit = async () => {
-        if (!inputFile || !outputFormatFile || !outputFileName) {
-            alert('Please provide all required inputs before submitting!');
+    // File upload handler
+    const handleUpload = async (file, setStatus) => {
+        if (!file) {
+            alert('Please select or drag a file before uploading!');
             return;
         }
 
-        const payload = {
-            input_file: inputFile,
-            output_format_file: outputFormatFile,
-            output_file: outputFileName,
-        };
+        const formData = new FormData();
+        formData.append('file', file);
 
         try {
-            const response = await fetch('https://pleasant-tranquility-production.up.railway.app', {
+            const response = await fetch('http://localhost:5000/upload', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
+                body: formData,
             });
 
             if (!response.ok) {
@@ -30,54 +31,60 @@ const App = () => {
             }
 
             const data = await response.json();
-            console.log('Response from backend:', data);
-            alert('File processed successfully: ' + JSON.stringify(data));
+            setStatus(`File uploaded successfully! File path: ${data.filePath}`);
         } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred: ' + error.message);
+            setStatus(`Error: ${error.message}`);
         }
+    };
+
+    // Handle submission for output file name
+    const handleOutputFileNameSubmit = () => {
+        if (!outputFileName) {
+            alert('Please enter an output file name!');
+            return;
+        }
+        setStatusOutputFileName(`Output file name submitted: ${outputFileName}`);
     };
 
     return (
         <div className="container">
             <h1 className="title">Schema Conversion</h1>
 
-            <div className="inputGroup">
-                <label className="label">Input File: </label>
-                <input
-                    type="text"
-                    placeholder="Enter input file name"
-                    value={inputFile}
-                    onChange={(e) => setInputFile(e.target.value)}
-                />
+            {/* Input File Section */}
+            <div className="uploadSection">
+                <Dropzone setFile={setInputFile} label="Upload Input File" />
+                <button onClick={() => handleUpload(inputFile, setStatusInput)} className="button">
+                    Upload Input File
+                </button>
+                {statusInput && <p className="status">{statusInput}</p>}
             </div>
 
-            <div className="inputGroup">
-                <label className="label">Output Format File: </label>
-                <input
-                    type="text"
-                    placeholder="Enter output format file name"
-                    value={outputFormatFile}
-                    onChange={(e) => setOutputFormatFile(e.target.value)}
-                />
+            {/* Output File Format Section */}
+            <div className="uploadSection">
+                <Dropzone setFile={setOutputFormatFile} label="Upload Output File Format" />
+                <button onClick={() => handleUpload(outputFormatFile, setStatusOutputFormat)} className="button">
+                    Upload Output File Format
+                </button>
+                {statusOutputFormat && <p className="status">{statusOutputFormat}</p>}
             </div>
 
-            <div className="inputGroup">
-                <label className="label">Output File Name: </label>
+            {/* Output File Name Section */}
+            <div className="uploadSection">
+                <label className="label" htmlFor="outputFileName">
+                    Enter Output File Name:
+                </label>
                 <input
+                    id="outputFileName"
                     type="text"
-                    placeholder="Enter output file name (e.g., output_file_converted.txt)"
                     value={outputFileName}
                     onChange={(e) => setOutputFileName(e.target.value)}
+                    className="textInput"
                 />
+                <button onClick={handleOutputFileNameSubmit} className="button">
+                    Submit Output File Name
+                </button>
+                {statusOutputFileName && <p className="status">{statusOutputFileName}</p>}
             </div>
-
-            <button
-                onClick={handleSubmit}
-                className="button"
-            >
-                Submit
-            </button>
         </div>
     );
 };
