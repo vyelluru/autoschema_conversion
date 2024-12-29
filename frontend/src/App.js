@@ -19,7 +19,7 @@ const App = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:4000/api', {
+            const response = await fetch('https://pleasant-tranquility-production.up.railway.app', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
