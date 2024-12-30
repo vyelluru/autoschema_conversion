@@ -162,13 +162,13 @@ export const Home = () => {
                         </p>
                     )}
                 </div>
-                <div>
+                <div class="text-center">
                     <Link to="/next">
                         <button
-                            className="btn btn-primary mt-5 w-10"
+                            className="btn btn-primary mt-3 btn-sm"
                             style={{ backgroundColor: '#5e5e5e', borderColor: '#5e5e5e' }} 
                         >
-                            Next
+                            Next Page
                         </button>
                     </Link>
                 </div>
