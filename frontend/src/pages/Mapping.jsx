@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+//(/next leads to Mapping)
 export const Mapping = () => {
     return (
         <div>
