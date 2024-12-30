@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Dropzone from './Dropzone'; // Import the reusable Dropzone component
-import './App.css'; // For shared styles
+import Dropzone from './Dropzone'; 
+import './App.css'; 
 
 const App = () => {
     const [inputFile, setInputFile] = useState(null);
@@ -9,8 +9,9 @@ const App = () => {
     const [statusInput, setStatusInput] = useState('');
     const [statusOutputFormat, setStatusOutputFormat] = useState('');
     const [statusOutputFileName, setStatusOutputFileName] = useState('');
+    const [statusSubmit, setStatusSubmit] = useState('');
 
-    // File upload handler
+    // Handle upload file -> send to s3
     const handleUpload = async (file, setStatus) => {
         if (!file) {
             alert('Please select or drag a file before uploading!');
@@ -21,7 +22,7 @@ const App = () => {
         formData.append('file', file);
 
         try {
-            const response = await fetch('http://localhost:5000/upload', {
+            const response = await fetch('http://localhost:4000/upload_file', {
                 method: 'POST',
                 body: formData,
             });
@@ -33,11 +34,11 @@ const App = () => {
             const data = await response.json();
             setStatus(`File uploaded successfully! File path: ${data.filePath}`);
         } catch (error) {
+            console.error(error);
             setStatus(`Error: ${error.message}`);
         }
     };
 
-    // Handle submission for output file name
     const handleOutputFileNameSubmit = () => {
         if (!outputFileName) {
             alert('Please enter an output file name!');
@@ -45,6 +46,38 @@ const App = () => {
         }
         setStatusOutputFileName(`Output file name submitted: ${outputFileName}`);
     };
+
+    // Handle submit button -> invoking Lambda
+    const handleSubmit = async () => {
+        const payload = {
+            inputFileName: inputFile.name,
+            outputFormatFileName: outputFormatFile.name,
+            outputFileName,
+        };
+    
+    
+        try {
+            const response = await fetch('http://localhost:4000/invoke_lambda', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            const successMessage = `Lambda function invoked successfully! Response: ${JSON.stringify(data)}`;
+            console.log(successMessage);
+            setStatusSubmit(successMessage);
+
+        } catch (error) {
+            console.error("Error during lambda invocation", error);
+            setStatusSubmit(`Error invoking Lambda: ${error.message}`);
+        }
+    };
+    
 
     return (
         <div className="container">
@@ -84,6 +117,14 @@ const App = () => {
                     Submit Output File Name
                 </button>
                 {statusOutputFileName && <p className="status">{statusOutputFileName}</p>}
+            </div>
+
+            {/* Submit Button */}
+            <div className="submitSection">
+                <button onClick={handleSubmit} className="button">
+                    Submit
+                </button>
+                {statusSubmit && <p className="status">{statusSubmit}</p>}
             </div>
         </div>
     );
