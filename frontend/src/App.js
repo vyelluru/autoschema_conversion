@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
     const [inputFile, setInputFile] = useState(null);
@@ -74,14 +75,14 @@ const App = () => {
 
     return (
         <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
-            <div className="container bg-white shadow-lg rounded p-4">
-                <h1 className="text-center text-primary mb-4">Schema Conversion</h1>
+            <div className="container bg-white shadow rounded p-4" style={{ maxWidth: '600px' }}>
+                <h1 className="text-center text-muted mb-4">Schema Conversion</h1>
 
                 {/* Input File Section */}
-                <div className="mb-4 p-3 border rounded bg-light">
+                <div className="mb-4 p-3 border rounded bg-light-subtle">
                     <label
                         htmlFor="inputFile"
-                        className="btn btn-primary w-100 text-center"
+                        className="btn btn-outline-primary text-center"
                     >
                         Choose Input File
                     </label>
@@ -93,18 +94,18 @@ const App = () => {
                     />
                     <button
                         onClick={() => handleUpload(inputFile, setStatusInput)}
-                        className="btn btn-secondary mt-2 w-100"
+                        className="btn btn-outline-secondary mt-2 w-100"
                     >
-                        Upload Input File
+                        Upload
                     </button>
                     {statusInput && <p className="mt-2 text-success">{statusInput}</p>}
                 </div>
 
                 {/* Output File Format Section */}
-                <div className="mb-4 p-3 border rounded bg-light">
+                <div className="mb-4 p-3 border rounded bg-light-subtle">
                     <label
                         htmlFor="outputFormatFile"
-                        className="btn btn-primary w-100 text-center"
+                        className="btn btn-outline-primary text-center"
                     >
                         Choose Output Format File
                     </label>
@@ -116,16 +117,16 @@ const App = () => {
                     />
                     <button
                         onClick={() => handleUpload(outputFormatFile, setStatusOutputFormat)}
-                        className="btn btn-secondary mt-2 w-100"
+                        className="btn btn-outline-secondary mt-2 w-100"
                     >
-                        Upload Output File Format
+                        Upload
                     </button>
                     {statusOutputFormat && <p className="mt-2 text-success">{statusOutputFormat}</p>}
                 </div>
 
                 {/* Output File Name Section */}
-                <div className="mb-4 p-3 border rounded bg-light">
-                    <label htmlFor="outputFileName" className="form-label fw-bold">
+                <div className="mb-4 p-3 border rounded bg-light-subtle">
+                    <label htmlFor="outputFileName" className="form-label text-muted fw-bold">
                         Enter Output File Name
                     </label>
                     <input
@@ -134,11 +135,11 @@ const App = () => {
                         value={outputFileName}
                         onChange={(e) => setOutputFileName(e.target.value)}
                         className="form-control"
-                        placeholder="Enter your file name"
+                        placeholder="Enter here (ex: outputFile.txt)"
                     />
                     <button
                         onClick={handleOutputFileNameSubmit}
-                        className="btn btn-primary mt-2 w-100"
+                        className="btn btn-outline-primary mt-2 w-100"
                     >
                         Submit Output File Name
                     </button>
@@ -150,11 +151,12 @@ const App = () => {
                     <button
                         onClick={handleSubmit}
                         className="btn btn-success w-100"
+                        style={{ backgroundColor: '#0d8f41', borderColor: '#0d8f41' }} // Softer green
                     >
                         Submit
                     </button>
                     {statusSubmit && (
-                        <p className="mt-3 text-center text-success border p-2 rounded">
+                        <p className="mt-3 text-center text-success border p-2 rounded bg-light">
                             {statusSubmit}
                         </p>
                     )}
