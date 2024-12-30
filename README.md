@@ -4,9 +4,7 @@
 
 The Schema Conversion Tool is a powerful, user-friendly application designed to automate and streamline the process of schema transformation. It simplifies the task of converting complex data schemas by allowing users to upload an input schema file and specify the desired output format. The tool processes these inputs to generate a fully transformed output file with accurate field mappings, ensuring consistency and correctness.
 
-Traditionally, manual schema conversion is time-intensive, error-prone, and challenging, especially when dealing with large datasets. This tool overcomes these challenges by automating the entire process, significantly reducing human effort and saving time. Leveraging AWS S3 for scalable file storage and AWS Lambda for serverless computation, the application ensures high performance and reliability, even with large files and intricate schemas.
-
-With its automated workflows, the Schema Conversion Tool eliminates the need for manual field matching and structure adjustments, minimizes errors, and validates conversions to meet the desired output format. By providing real-time status updates, handling discrepancies seamlessly, and integrating effortlessly into cloud environments, this tool empowers users to handle data migration, system integration, and schema standardization with ease and efficiency.
+Traditionally, manual schema conversion is time-intensive, error-prone, and challenging, especially when dealing with large datasets. This tool overcomes these challenges by automating the entire process, significantly reducing human effort and saving time. With its automated workflows, the Schema Conversion Tool eliminates the need for manual field matching and structure adjustments, minimizes errors, and validates conversions to meet the desired output format. 
 
 ## Features
 
