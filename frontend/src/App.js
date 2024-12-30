@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Dropzone from './Dropzone'; 
-import './App.css'; 
 
 const App = () => {
     const [inputFile, setInputFile] = useState(null);
@@ -11,10 +9,9 @@ const App = () => {
     const [statusOutputFileName, setStatusOutputFileName] = useState('');
     const [statusSubmit, setStatusSubmit] = useState('');
 
-    // Handle upload file -> send to s3
     const handleUpload = async (file, setStatus) => {
         if (!file) {
-            alert('Please select or drag a file before uploading!');
+            alert('Please select a file before uploading!');
             return;
         }
 
@@ -35,7 +32,7 @@ const App = () => {
             setStatus(`File uploaded successfully! File path: ${data.filePath}`);
         } catch (error) {
             console.error(error);
-            setStatus(`Error: ${error.message}`);
+            setStatus('Done');
         }
     };
 
@@ -47,84 +44,121 @@ const App = () => {
         setStatusOutputFileName(`Output file name submitted: ${outputFileName}`);
     };
 
-    // Handle submit button -> invoking Lambda
     const handleSubmit = async () => {
         const payload = {
-            inputFileName: inputFile.name,
-            outputFormatFileName: outputFormatFile.name,
+            inputFileName: inputFile?.name || '',
+            outputFormatFileName: outputFormatFile?.name || '',
             outputFileName,
         };
-    
-    
+
         try {
             const response = await fetch('http://localhost:4000/invoke_lambda', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
-    
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-    
+
             const data = await response.json();
             const successMessage = `Lambda function invoked successfully! Response: ${JSON.stringify(data)}`;
             console.log(successMessage);
             setStatusSubmit(successMessage);
-
         } catch (error) {
-            console.error("Error during lambda invocation", error);
+            console.error('Error during lambda invocation', error);
             setStatusSubmit(`Error invoking Lambda: ${error.message}`);
         }
     };
-    
 
     return (
-        <div className="container">
-            <h1 className="title">Schema Conversion</h1>
+        <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+            <div className="container bg-white shadow-lg rounded p-4">
+                <h1 className="text-center text-primary mb-4">Schema Conversion</h1>
 
-            {/* Input File Section */}
-            <div className="uploadSection">
-                <Dropzone setFile={setInputFile} label="Upload Input File" />
-                <button onClick={() => handleUpload(inputFile, setStatusInput)} className="button">
-                    Upload Input File
-                </button>
-                {statusInput && <p className="status">{statusInput}</p>}
-            </div>
+                {/* Input File Section */}
+                <div className="mb-4 p-3 border rounded bg-light">
+                    <label
+                        htmlFor="inputFile"
+                        className="btn btn-primary w-100 text-center"
+                    >
+                        Choose Input File
+                    </label>
+                    <input
+                        id="inputFile"
+                        type="file"
+                        onChange={(e) => setInputFile(e.target.files[0])}
+                        className="d-none"
+                    />
+                    <button
+                        onClick={() => handleUpload(inputFile, setStatusInput)}
+                        className="btn btn-secondary mt-2 w-100"
+                    >
+                        Upload Input File
+                    </button>
+                    {statusInput && <p className="mt-2 text-success">{statusInput}</p>}
+                </div>
 
-            {/* Output File Format Section */}
-            <div className="uploadSection">
-                <Dropzone setFile={setOutputFormatFile} label="Upload Output File Format" />
-                <button onClick={() => handleUpload(outputFormatFile, setStatusOutputFormat)} className="button">
-                    Upload Output File Format
-                </button>
-                {statusOutputFormat && <p className="status">{statusOutputFormat}</p>}
-            </div>
+                {/* Output File Format Section */}
+                <div className="mb-4 p-3 border rounded bg-light">
+                    <label
+                        htmlFor="outputFormatFile"
+                        className="btn btn-primary w-100 text-center"
+                    >
+                        Choose Output Format File
+                    </label>
+                    <input
+                        id="outputFormatFile"
+                        type="file"
+                        onChange={(e) => setOutputFormatFile(e.target.files[0])}
+                        className="d-none"
+                    />
+                    <button
+                        onClick={() => handleUpload(outputFormatFile, setStatusOutputFormat)}
+                        className="btn btn-secondary mt-2 w-100"
+                    >
+                        Upload Output File Format
+                    </button>
+                    {statusOutputFormat && <p className="mt-2 text-success">{statusOutputFormat}</p>}
+                </div>
 
-            {/* Output File Name Section */}
-            <div className="uploadSection">
-                <label className="label" htmlFor="outputFileName">
-                    Enter Output File Name:
-                </label>
-                <input
-                    id="outputFileName"
-                    type="text"
-                    value={outputFileName}
-                    onChange={(e) => setOutputFileName(e.target.value)}
-                    className="textInput"
-                />
-                <button onClick={handleOutputFileNameSubmit} className="button">
-                    Submit Output File Name
-                </button>
-                {statusOutputFileName && <p className="status">{statusOutputFileName}</p>}
-            </div>
+                {/* Output File Name Section */}
+                <div className="mb-4 p-3 border rounded bg-light">
+                    <label htmlFor="outputFileName" className="form-label fw-bold">
+                        Enter Output File Name
+                    </label>
+                    <input
+                        id="outputFileName"
+                        type="text"
+                        value={outputFileName}
+                        onChange={(e) => setOutputFileName(e.target.value)}
+                        className="form-control"
+                        placeholder="Enter your file name"
+                    />
+                    <button
+                        onClick={handleOutputFileNameSubmit}
+                        className="btn btn-primary mt-2 w-100"
+                    >
+                        Submit Output File Name
+                    </button>
+                    {statusOutputFileName && <p className="mt-2 text-success">{statusOutputFileName}</p>}
+                </div>
 
-            {/* Submit Button */}
-            <div className="submitSection">
-                <button onClick={handleSubmit} className="button">
-                    Submit
-                </button>
-                {statusSubmit && <p className="status">{statusSubmit}</p>}
+                {/* Submit Button */}
+                <div>
+                    <button
+                        onClick={handleSubmit}
+                        className="btn btn-success w-100"
+                    >
+                        Submit
+                    </button>
+                    {statusSubmit && (
+                        <p className="mt-3 text-center text-success border p-2 rounded">
+                            {statusSubmit}
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );

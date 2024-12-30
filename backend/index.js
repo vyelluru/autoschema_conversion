@@ -1,9 +1,9 @@
 import express from 'express'; 
 import dotenv from 'dotenv';
-import axios from 'axios'; 
 import cors from 'cors'; 
-import { upload } from './upload.js';
-import { upload_file_aws } from './upload.js';
+import multer from 'multer'; 
+import multerS3 from 'multer-s3'; 
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 dotenv.config();
 
@@ -13,10 +13,46 @@ const PORT = 4000;
 app.use(express.json());
 app.use(cors());
 
-/*
-1. Pass a file through multer, then click upload to "AWS S3".
-2. Click "submit" button to call the Lambda function directly.
-*/
+
+// Configure S3 client
+const s3Client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
+
+
+// Configure multer with S3
+const upload = multer({
+    storage: multerS3({
+      s3: s3Client,
+      bucket: process.env.BUCKET_NAME,
+      acl: 'public-read',
+      key: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+      },
+    }),
+  });
+
+  
+async function upload_file_aws(file) {
+    const params = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: file.originalname,
+      Body: file.buffer,
+    };
+  
+    try {
+      const command = new PutObjectCommand(params);
+      await s3Client.send(command);
+      return 'File uploaded successfully to S3';
+    } catch (err) {
+      console.error('Error uploading to S3:', err);
+      throw new Error('Error uploading file to S3');
+    }
+  }
 
 // Upload File Route
 app.post('/upload_file', upload.single('file'), async (req, res) => {
@@ -47,14 +83,13 @@ app.post('/invoke_lambda', async (req, res) => {
       });
   
       if (!response.ok) {
-        const errorBody = await response.text(); // Capture Lambda's error message
+        const errorBody = await response.text(); 
         console.error("Lambda Response Error:", errorBody);
         throw new Error(`Error invoking Lambda: ${response.status} ${response.statusText}`);
       }
   
       const responseData = await response.json();
   
-      //console.log(responseData);
       res.status(200).json(responseData);
     } catch (err) {
       console.error(err);
@@ -63,7 +98,7 @@ app.post('/invoke_lambda', async (req, res) => {
   });
   
 
-// Start server
+
 app.listen(PORT, () => {
   console.log(`Backend server is running on http://localhost:${PORT}`);
 });
